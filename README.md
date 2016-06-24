@@ -149,5 +149,78 @@ edit
     password: "123"
     groups: ["Administrators"]
 ```
+then create database role
+```
+mkdir -p roles/database/tasks
+vim roles/database/tasks/main.yml
+```
+edit
+```
+---
+- name: Install mysql
+  win_chocolatey:
+    name: mysql
+    state: present
+```
+edit playbook webservers.yml:
+```
+---
+- hosts: web
+  roles:
+    - webserver
+    - common
+```
+then another playbook
+```
+vim databases.yml
+```
+edit
+```
+---
+- hosts: db
+  roles:
+    - common
+    - database
+```
+
+######15 install ansible tower
+```
+apt-get install build-essential libssl-dev libffi-dev python-dev
+pip install cryptography
+wget ansible-tower.tar.gz
+tar xvf
+cd ansible-tower
+./configure, //press i
+./setup.sh
+```
+verify
+```
+http://controlserver ip
+```
+######16 using ansible tower
+admin->setup->organizations->default->name()->save  
+credentials->owner=admin type=machine->password=?  
+create inventory:
+```
+---
+ansible_port: 5985
+ansible_connection: winrm
+```
+copy config file
+```
+cd /var/lib/awx/projects
+cp -R /home/ke/test/ globomantics
+cd globomantics/
+rm group_vars/all.yml
+tower-manage inventory_import --source=./inventory.yml --inventory-name="globomantic"
+```
+######create project  
+name=> globomantic  
+organ->  
+scm type=manual  
+playbook dict=globomantics  
+######create job templates
+job templates->name, jobtype=? choose playbook
+
 
 
